@@ -1,4 +1,4 @@
-package at.ac.tuwien.mnsa.comm;
+package at.ac.tuwien.mnsa.sms.comm;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -35,6 +35,10 @@ public class SerialConnection implements Closeable {
             CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(properties.portString);
             port = (SerialPort) portIdentifier.open(this.getClass().getName(), 1000);
             port.setSerialPortParams(properties.baudrate, properties.databits, properties.stopbits, properties.parity);
+            port.enableReceiveTimeout(3000);
+            if (!port.isReceiveTimeoutEnabled()) {
+                throw new UnsupportedCommOperationException("Unable to set receive timeout");
+            }
         } catch (NoSuchPortException ex) {
             throw new SerialConnectionException("Port " + properties.portString + " does not exist", ex);
         } catch (PortInUseException ex) {

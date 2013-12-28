@@ -1,4 +1,4 @@
-package at.ac.tuwien.mnsa.comm;
+package at.ac.tuwien.mnsa.sms.comm;
 
 public class SerialConnectionException extends Exception {
 
