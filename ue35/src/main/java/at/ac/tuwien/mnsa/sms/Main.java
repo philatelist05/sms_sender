@@ -9,11 +9,10 @@ public class Main {
         SerialConnection serialConnection = null;
 
         try {
-            serialConnection = SerialConnection.open();
+            serialConnection = SerialConnection.open("sendsms.properties");
 
             InputStream inputStream = serialConnection.getInputStream();
             OutputStream outputStream = serialConnection.getOutputStream();
-
             PrintWriter writer = new PrintWriter(outputStream);
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -51,8 +50,10 @@ public class Main {
                 System.out.print(ch);
             }
             System.out.println();
-        } catch (IOException e) {
-            //e.printStackTrace();
+        } catch (IOException ignored) {
+            //This Exception is ignored because
+            //an IOException is always thrown in case
+            //of a timeout (which is true for EVERY read)
         }
     }
 

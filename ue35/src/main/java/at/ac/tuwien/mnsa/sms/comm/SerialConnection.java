@@ -16,9 +16,9 @@ public class SerialConnection implements Closeable {
         private final int databits;
         private final String portString;
 
-        SerialConnectionProperties() throws ConfigurationException {
+        SerialConnectionProperties(String propertiesFileLocation) throws ConfigurationException {
             PropertiesConfiguration configuration
-                    = new PropertiesConfiguration("sendsms.properties");
+                    = new PropertiesConfiguration(propertiesFileLocation);
             portString = configuration.getString("port", "COM1");
             databits = configuration.getInt("databits", 8);
             stopbits = configuration.getInt("stopbits", 1);
@@ -48,9 +48,9 @@ public class SerialConnection implements Closeable {
         }
     }
 
-    public static SerialConnection open() throws SerialConnectionException {
+    public static SerialConnection open(String propertiesFileLocation) throws SerialConnectionException {
         try {
-            return new SerialConnection(new SerialConnectionProperties());
+            return new SerialConnection(new SerialConnectionProperties(propertiesFileLocation));
         } catch (ConfigurationException e) {
             throw new SerialConnectionException("Failed to load properties ", e);
         }
