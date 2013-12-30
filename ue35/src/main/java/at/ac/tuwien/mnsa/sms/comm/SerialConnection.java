@@ -1,5 +1,6 @@
 package at.ac.tuwien.mnsa.sms.comm;
 
+import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
@@ -16,9 +17,7 @@ public class SerialConnection implements Closeable {
         private final int databits;
         private final String portString;
 
-        SerialConnectionProperties(String propertiesFileLocation) throws ConfigurationException {
-            PropertiesConfiguration configuration
-                    = new PropertiesConfiguration(propertiesFileLocation);
+        SerialConnectionProperties(Configuration configuration) throws ConfigurationException {
             portString = configuration.getString("port", "COM1");
             databits = configuration.getInt("databits", 8);
             stopbits = configuration.getInt("stopbits", 1);
@@ -48,9 +47,9 @@ public class SerialConnection implements Closeable {
         }
     }
 
-    public static SerialConnection open(String propertiesFileLocation) throws SerialConnectionException {
+    public static SerialConnection open(Configuration configuration) throws SerialConnectionException {
         try {
-            return new SerialConnection(new SerialConnectionProperties(propertiesFileLocation));
+            return new SerialConnection(new SerialConnectionProperties(configuration));
         } catch (ConfigurationException e) {
             throw new SerialConnectionException("Failed to load properties ", e);
         }
