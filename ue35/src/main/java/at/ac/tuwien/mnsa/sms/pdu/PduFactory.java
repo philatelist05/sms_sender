@@ -16,6 +16,7 @@ public final class PduFactory {
         InputStream inputStream = ClassLoader.getSystemResourceAsStream(csvFileLocation);
 
         Scanner scanner = new Scanner(inputStream);
+        scanner.useDelimiter("\r\n");
         scanner.skip(Pattern.compile("\\s*"));
 
         while (scanner.hasNext()) {
