@@ -30,10 +30,7 @@ public final class PduFactory {
             String text = parts[1].trim();
 
             if (text.length() > 160) {
-                String chunks[] = splitIntoEqualChunks(text, 160);
-                for (int chunkNo = 0; chunkNo < chunks.length; chunkNo++) {
-                    pdus.add(new ConcatenatedPdu(phoneNumber, chunks[chunkNo], chunkNo));
-                }
+                pdus.addAll(ConcatenatedPdu.build(phoneNumber, text));
             } else {
                 pdus.add(new SimplePdu(phoneNumber, text));
             }
@@ -41,15 +38,5 @@ public final class PduFactory {
 
         scanner.close();
         return pdus;
-    }
-
-    private static String[] splitIntoEqualChunks(String text, int size) {
-        String[] ret = new String[(text.length() + size - 1) / size];
-
-        int i = 0;
-        for (int start = 0; start < text.length(); start += size) {
-            ret[i++] = text.substring(start, Math.min(text.length(), start + size));
-        }
-        return ret;
     }
 }

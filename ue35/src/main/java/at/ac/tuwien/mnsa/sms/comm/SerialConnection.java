@@ -34,7 +34,7 @@ public class SerialConnection implements Closeable {
             CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(properties.portString);
             port = (SerialPort) portIdentifier.open(this.getClass().getName(), 1000);
             port.setSerialPortParams(properties.baudrate, properties.databits, properties.stopbits, properties.parity);
-            port.enableReceiveTimeout(3000);
+            port.enableReceiveTimeout(5000);
             if (!port.isReceiveTimeoutEnabled()) {
                 throw new UnsupportedCommOperationException("Unable to set receive timeout");
             }

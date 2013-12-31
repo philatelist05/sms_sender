@@ -5,7 +5,7 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class SimplePdu implements Pdu {
+public class SimplePdu extends Pdu {
 
     private final byte[] encodedText;
     private final int textLength;
@@ -15,7 +15,7 @@ public class SimplePdu implements Pdu {
     public SimplePdu(String phoneNumber, String text) throws EncodingException {
         textLength = text.length();
         encodedText = Encoder.encode(text);
-        encodedPhoneNumber = encodePhoneNumber(phoneNumber);
+        encodedPhoneNumber = super.encodePhoneNumber(phoneNumber);
         phoneNumberLength = phoneNumber.length();
     }
 
@@ -45,23 +45,5 @@ public class SimplePdu implements Pdu {
         stream.write(encodedText);
 
         return DatatypeConverter.printHexBinary(stream.toByteArray());
-    }
-
-    public byte[] encodePhoneNumber(String number) {
-        ByteArrayOutputStream ret = new ByteArrayOutputStream();
-        for (int i = 0; i < number.length(); i += 2) {
-            int value;
-            if (i + 1 < number.length()) {
-                value = 16 * intValue(number.charAt(i + 1)) + intValue(number.charAt(i));
-            } else {
-                value = 16 * 15 + intValue(number.charAt(i));
-            }
-            ret.write(value);
-        }
-        return ret.toByteArray();
-    }
-
-    private int intValue(char c) {
-        return c - '0';
     }
 }
