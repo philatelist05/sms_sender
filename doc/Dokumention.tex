@@ -214,7 +214,7 @@ Abbildung~\ref{fig:gsm-encoding} veranschaulicht grafisch die Konvertierung von 
 	\caption{Umwandlung von 8 Septetten in 7 Oktetten}
 	\label{fig:gsm-encoding}
 \end{figure}
-Falls die Anzahl der zu übertragenden Septetten nicht einem Vielfachen von 8 entspricht (wie in Abbildung~\ref{fig:gsm-encoding}),
+Falls die Anzahl der zu übertragenden Septetten nicht einem Vielfachen von 8 entspricht,
 müssen sogenannte \textit{Paddingbits} noch am Schluss angefügt werden.
 
 \section{Methodisches Vorgehen - Fallbeispiel}
@@ -226,14 +226,15 @@ Eine weitere Vorraussetzung für eine einwandfreie
 Funktionsweise ist die Installation des Nokia 6212 NFC SDKs. Letztere installiert einen COM Port, über jenem die gesamte
 Kommunikation mit dem Mobiltelefon statt findet. Wichtig ist, das dieser Port AT-Befehle akzeptiert. 
 Dazu öffnet man am besten eine Konsole (zum Beispiel \textit{Hyperterminal}) und tippt \texttt{AT} gefolgt von Enter ein. 
-Sollte anschließend dieser Befehl mit \texttt{OK} bestätigt werden, wurde alles korrekt eingerichtet. 
+Sollte anschließend dieser Befehl mit \texttt{OK} bestätigt werden. Sollte dies nicht der Fall sein empfiehlt sich 
+die Neukonfiguration beziehungsweise die Vergabe eines anderen COM-Ports bei einer Neuinstallation des Modems.
 
-Zur seriellen Kommunikation ist weiters die Installation der \textit{Java Comm API} notwendig. Hierzu muss die native Bibliothek \textit{win32com.dll} in den Order $\%JAVA\_HOME\%/jre/bin$ und die Datei \textit{javax.comm.properties} in den Order $\%JAVA\_HOME\%/jre/lib$ kopiert werden (beide Dateien wurde von der LVA-Leitung zur Verfügung gestellt).
+Zur seriellen Kommunikation ist weiters die Installation der \textit{Java Comm API} notwendig. Hierzu muss die native Bibliothek \textit{win32com.dll} in den Order $\%JAVA\_HOME\%/jre/bin$ und die Datei \textit{javax.comm.properties} in den Order $\%JAVA\_HOME\%/jre/lib$ kopiert werden (beide Dateien wurden von der LVA-Leitung zur Verfügung gestellt).
 
 \subsection{Build Management}~\\
-Als Buildmanagement Werkzeug wurde Apache Maven~\cite{maven} verwendet. Mit dem Befehl \texttt{mvn package} ein
-ausführbares jar-Archiv im Order \textit{target} erstellt. Der Befehl \textit{java -jar sms-sender-1.0-SNAPSHOT-jar-with-dependencies.jar}
-startet das Programm. 
+Als Buildmanagement Werkzeug wurde Apache Maven~\cite{maven} verwendet. Der Befehl \texttt{mvn package} erstellt ein
+ausführbares jar-Archiv im Order \textit{target}. Anschließend genügt  das Ausführen des Befehls \textit{java -jar sms-sender-1.0-SNAPSHOT-jar-with-dependencies.jar}
+um das Programm zu starten. 
 
 \subsection{Konfigurationsdateien}~\\
 Die primäre Konfigurationsdatei ist \textit{sendsms.properties}.
@@ -249,7 +250,7 @@ Abbildung \ref{fig:sms-prop} zeigt beispielhaft eine ebensolche Datei.\\
 \end{figure}
 
 Daneben muss noch ein Comma Separated File (CSV) existieren (spezifiziert in \textit{sendsms.properties}). 
-Abbildung \ref{fig:sms-csv} zeigt beispielhaft eine Datei \textit{sendsms.csv}.\\
+Abbildung \ref{fig:sms-csv} zeigt beispielhaft die Datei \textit{sendsms.csv}.\\
  \begin{figure}[H]
  	\begin{verbatim}
 		+436507112256,This is a short text!
