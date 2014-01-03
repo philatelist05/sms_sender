@@ -31,10 +31,6 @@ public class Main {
             writer.flush();
             println(reader);
 
-            writer.print("AT+CSMS=0\r");
-            writer.flush();
-            println(reader);
-
             Collection<Pdu> pdus = PduFactory.buildPdu(config);
             for (Pdu pdu : pdus) {
                 String encodedValue = pdu.getHexEncodedValue();
