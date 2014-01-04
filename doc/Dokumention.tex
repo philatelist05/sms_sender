@@ -123,20 +123,20 @@ Die Java-Applikation kommuniziert mit dem Handy (Nokia 6212) über die serielle
 Schnittstelle. Intern werden SMS-Nachrichten unter Verwendung sogenannter AT-Befehle
 versendet.
 \subsection{AT-Befehle}~\\
-\cite{at-befehle} unterteilt AT-Befehle in 
+AT-Befehle werden in 
 	\begin{inparaenum}[1)]
 		\item \textit{Basic commands}, 
 		\item \textit{Extended commands}, 
 		\item \textit{Parameter type commands} und  
 		\item \textit{Action type commands}
-	\end{inparaenum}. 
+	\end{inparaenum} unterteilt \cite{at-befehle}. 
 Während \textit{Basic commands} auf jedem Modem verfügbar sind, kann die Verfügbarkeit
 bzw. die genaue Syntax der \textit{Extended commands} mit nachgestelltem Fragezeichen
 abgefragt werden. Letztere verfügen zusätzlich noch über den Präfix \texttt{AT+}. 
 Ein erfolgreich ausgeführter Befehl wird vom Modem mit \texttt{OK} quittiert, andernfalls
 schickt es \texttt{ERROR} und bricht die Abarbeitung weiterer Befehle ab.
 
-Tabelle~\ref{tab:at-befehle} listet alle AT-Befehle zum erfolgreichen
+Tabelle~\ref{tab:at-befehle} listet alle notwendigen AT-Befehle zum erfolgreichen
 Versenden von SMS-Nachrichten\\
 
 \begin{table}[H]
@@ -144,10 +144,10 @@ Versenden von SMS-Nachrichten\\
 		\textbf{AT-Befehl} & \textbf{Beschreibung} \\
 		\hline
 		\texttt{ATZ} & Befehl zum Zurücksetzten des Modems.\\
-		\texttt{AT+CMGF} & Definiert welches Format für die SMS-Übertragung verwendet wird. (\texttt{0} für \textit{PDU-Mode} und \texttt{1} für \textit{Text-Mode})\\
-		\texttt{AT+CMGS} & Versendet direkt eine SMS. Die genaue Syntax ist abhängig von Übertragungs-Mode. \\
+		\texttt{AT+CMGF} & Definiert, welches Format für die SMS-Übertragung verwendet wird. (\texttt{0} für \textit{PDU-Mode} und \texttt{1} für \textit{Text-Mode})\\
+		\texttt{AT+CMGS} & Versendet direkt eine SMS. Die genaue Syntax ist abhängig vom Übertragungs-Mode. \\
 	\end{tabularx}
-	\caption{Menge aller AT-Befehle zum Versenden von SMS-Nachrichten}
+	\caption{Menge aller notwendigen AT-Befehle zum Versenden von SMS-Nachrichten}
 	\label{tab:at-befehle}
 \end{table}
 \subsection{PDU Mode}~\\
@@ -179,7 +179,7 @@ Abbildung~\ref{fig:pdu} zeigt schematisch den Aufbau einer SMS-SUBMIT-Nachricht 
 \end{figure}
 
 Um auch Nachrichten mit einer Länge größer als 160 Zeichen versenden zu können, 
-wurde ein eigener Nachrichtentyp spezifiziert. Der wesentlichste Unterschied zum
+wurde ein eigener Nachrichtentyp spezifiziert. Der Unterschied zum
 herkömmlichen Nachrichtentyp ist der sogenannte \textit{User Data Header} welcher am
 Beginn des Payloads zu finden ist. Abbildung \ref{fig:gsm-udh} zeight schematisch den
 Aufbau des User Data Headers.\\
@@ -226,10 +226,10 @@ Eine weitere Vorraussetzung für eine einwandfreie
 Funktionsweise ist die Installation des Nokia 6212 NFC SDKs. Letztere installiert einen COM Port, über jenem die gesamte
 Kommunikation mit dem Mobiltelefon statt findet. Wichtig ist, das dieser Port AT-Befehle akzeptiert. 
 Dazu öffnet man am besten eine Konsole (zum Beispiel \textit{Hyperterminal}) und tippt \texttt{AT} gefolgt von Enter ein. 
-Sollte anschließend dieser Befehl mit \texttt{OK} bestätigt werden. Sollte dies nicht der Fall sein empfiehlt sich 
+Anschließend sollte dieser Befehl mit \texttt{OK} bestätigt werden. Sollte dies nicht der Fall sein, empfiehlt sich 
 die Neukonfiguration beziehungsweise die Vergabe eines anderen COM-Ports bei einer Neuinstallation des Modems.
 
-Zur seriellen Kommunikation ist weiters die Installation der \textit{Java Comm API} notwendig. Hierzu muss die native Bibliothek \textit{win32com.dll} in den Order $\%JAVA\_HOME\%/jre/bin$ und die Datei \textit{javax.comm.properties} in den Order $\%JAVA\_HOME\%/jre/lib$ kopiert werden (beide Dateien wurden von der LVA-Leitung zur Verfügung gestellt).
+Zur seriellen Kommunikation ist weiters die Installation der \textit{Java Comm API} notwendig. Hierzu muss die native Bibliothek \textit{win32com.dll} in den Order \texttt{\%JAVA\_HOME\%/jre/bin} und die Datei \textit{javax.comm.properties} in den Order \texttt{\%JAVA\_HOME\%/jre/lib} kopiert werden (beide Dateien wurden von der LVA-Leitung zur Verfügung gestellt).
 
 \subsection{Build Management}~\\
 Als Buildmanagement Werkzeug wurde Apache Maven~\cite{maven} verwendet. Der Befehl \texttt{mvn package} erstellt ein
@@ -260,6 +260,12 @@ Abbildung \ref{fig:sms-csv} zeigt beispielhaft die Datei \textit{sendsms.csv}.\\
  	\label{fig:sms-csv}
  \end{figure}
  
+ \section{Fazit}
+Essentiell für die korrekte Funktionsweise dieses Programms ist eine serielle Verbindung zum Mobiltelefon über jene AT-Befehle abgesetzt werden können. 
+Sollte dies nicht möglich sein, schafft wahrscheinlich ein Blick in den Gerätemanager Abhilfe. Das Handy sollte als Modem im Gerätemanager gelistet sein. 
+Ist dies nicht der Fall, hilft eine Neuinstallation des Handytreibers. Weiters sollte der richtige serielle Port angegeben werden. Dieser kann im Konfigurationsdialog
+des Modems im Reiter \texttt{Advanced} und einem Klick auf \texttt{Advanced Port Settings} konfiguriert werden. 
+
 % ------------------------------------------------------------------------------
 % Literatur
 % ------------------------------------------------------------------------------
