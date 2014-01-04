@@ -1,0 +1,275 @@
+\documentclass[paper=a4, fontsize=11pt]{scrartcl}
+\usepackage[svgnames]{xcolor}
+\usepackage[a4paper,pdftex]{geometry}
+
+\usepackage[german]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[numbers]{natbib}
+
+\usepackage{fullpage}
+\usepackage{fancyhdr}
+
+\usepackage{float}
+\restylefloat{table}
+\restylefloat{figure}
+\usepackage{tabularx}
+\usepackage{paralist}
+\usepackage{bytefield}
+
+\pagestyle{fancy}
+	\fancyhead[L]{INSO - Industrial Software\\ \small{Institut für Rechnergestützte Automation | Fakultät für Informatik | Technische Universität Wien}}
+	\fancyhead[C]{}
+	\fancyhead[R]{}
+	\fancyfoot[L]{SMS senden via AT-Befehle}
+	\fancyfoot[C]{}
+	\fancyfoot[R]{Seite \thepage}
+	\renewcommand{\headrulewidth}{1pt}
+	\renewcommand{\footrulewidth}{1pt}
+\setlength{\headheight}{0.5cm}
+\setlength{\headsep}{0.75cm}
+
+\usepackage{hyperref}
+	\hypersetup{
+		colorlinks,
+		citecolor=black,
+		filecolor=black,
+		linkcolor=black,
+		urlcolor=black
+	}
+
+\usepackage{pdfpages}
+
+\usepackage[babel,german=quotes]{csquotes}
+
+% ------------------------------------------------------------------------------
+% Title Setup
+% ------------------------------------------------------------------------------
+\newcommand{\HRule}[1]{\rule{\linewidth}{#1}} % Horizontal rule
+
+\makeatletter               % Title
+\def\printtitle{%
+	{\centering \@title\par}}
+\makeatother
+
+\makeatletter               % Author
+\def\printauthor{%
+	{\centering \normalsize \@author}}
+\makeatother
+
+
+\title{	\Large SMS senden via AT-Befehle% Subtitle of the document
+	\\[2.0cm] \HRule{0.5pt} \\
+	\LARGE \textbf{\uppercase{Dokumentation}} % Title
+	\HRule{2pt} \\[1.5cm]
+	\normalsize Wien am \today \\
+	\normalsize Technische Universität Wien \\[1.0cm]
+	\normalsize ausgeführt im Rahmen der Lehrveranstaltung \\
+	\LARGE 183.286 – (Mobile) Network Service Applications
+}
+
+
+\author{
+	Gruppe 35 \\[2.0cm]
+	Stefan Gamerith \\
+	0925081 \\
+	E 066 937 \\
+	Software Engineering and Internet Computing \\[2.0cm]
+}
+
+\begin{document}
+% ------------------------------------------------------------------------------
+% Title Page
+% ------------------------------------------------------------------------------
+\thispagestyle{empty} % Remove page numbering on this page
+\printtitle
+	\vfill
+\printauthor
+\newpage
+% ------------------------------------------------------------------------------
+% Kurzfassung
+% ------------------------------------------------------------------------------
+\section*{Kurzfassung}
+Im Rahmen der Lehrveranstaltung \textit{(Mobile) Network Service Applications} wurde eine 
+Java Applikation entwickelt welche es ermöglicht, SMS-Nachrichten beliebiger Länge
+zu versenden. Der Nachrichtentext wird bei der Übertragung mit dem GSM 7-Bit 
+Alphabet~\cite{gsm-7-bit} enkodiert. 
+% ------------------------------------------------------------------------------
+% Table of Contents
+% ------------------------------------------------------------------------------
+\newpage
+\tableofcontents
+\newpage
+% ------------------------------------------------------------------------------
+% List of Tables
+% ------------------------------------------------------------------------------
+\newpage
+\listoftables
+\listoffigures
+\newpage
+% ------------------------------------------------------------------------------
+% Document
+% ------------------------------------------------------------------------------
+\section{Einleitung}
+Aufbauend der Aufgabenstellung \textit{Entwicklung einer Applikation zum
+Senden von SMS} wurde eine Java-Applikation entwickelt welche es ermöglicht, 
+SMS-Nachrichten beliebiger Länge zu versenden. Das Programm bedient sich
+sogenannter AT-Befehle~\cite{at-befehle} zur Kommunikation mit dem Mobiltelefon.
+Die Datenübertragung geschieht über eine serielle Schnittstelle.
+
+\section{Problemstellung/Zielsetzung}
+Die Java-Applikation kommuniziert mit dem Handy (Nokia 6212) über die serielle
+Schnittstelle. Intern werden SMS-Nachrichten unter Verwendung sogenannter AT-Befehle
+versendet.
+\subsection{AT-Befehle}~\\
+AT-Befehle werden in 
+	\begin{inparaenum}[1)]
+		\item \textit{Basic commands}, 
+		\item \textit{Extended commands}, 
+		\item \textit{Parameter type commands} und  
+		\item \textit{Action type commands}
+	\end{inparaenum} unterteilt \cite{at-befehle}. 
+Während \textit{Basic commands} auf jedem Modem verfügbar sind, kann die Verfügbarkeit
+bzw. die genaue Syntax der \textit{Extended commands} mit nachgestelltem Fragezeichen
+abgefragt werden. Letztere verfügen zusätzlich noch über den Präfix \texttt{AT+}. 
+Ein erfolgreich ausgeführter Befehl wird vom Modem mit \texttt{OK} quittiert, andernfalls
+schickt es \texttt{ERROR} und bricht die Abarbeitung weiterer Befehle ab.
+
+Tabelle~\ref{tab:at-befehle} listet alle notwendigen AT-Befehle zum erfolgreichen
+Versenden von SMS-Nachrichten\\
+
+\begin{table}[H]
+	\begin{tabularx}{\textwidth}{l|X}
+		\textbf{AT-Befehl} & \textbf{Beschreibung} \\
+		\hline
+		\texttt{ATZ} & Befehl zum Zurücksetzten des Modems.\\
+		\texttt{AT+CMGF} & Definiert, welches Format für die SMS-Übertragung verwendet wird. (\texttt{0} für \textit{PDU-Mode} und \texttt{1} für \textit{Text-Mode})\\
+		\texttt{AT+CMGS} & Versendet direkt eine SMS. Die genaue Syntax ist abhängig vom Übertragungs-Mode. \\
+	\end{tabularx}
+	\caption{Menge aller notwendigen AT-Befehle zum Versenden von SMS-Nachrichten}
+	\label{tab:at-befehle}
+\end{table}
+\subsection{PDU Mode}~\\
+Eine wichtige Anforderung für die Implementierung war das Versenden der SMS-Nachrichten
+im PDU-Mode. Dieser ermöglicht die Übertragung von Binärdaten welche als hexadezimale Zeichenkette
+angegeben werden können.
+
+Die zwei wichtigsten Nachrichtentypen im PDU-Mode sind SUBMIT-Nachrichten und DELIVER-Nachrichten.
+Abbildung~\ref{fig:pdu} zeigt schematisch den Aufbau einer SMS-SUBMIT-Nachricht im PDU-Mode~\cite{pdu-mode} (in Byte Blöcken).
+\begin{figure}[H]
+	\begin{bytefield}[bitwidth=\textwidth/8]{8}
+		\bitbox{8}{SMSC information (0x00)}\\
+		\bitbox{8}{Erstes Octet der SMS-SUBMIT Nachricht (0x01)}\\
+		\bitbox{8}{TP-Message Reference (0x00)}\\
+		\bitbox{8}{Länge der Empfänger Adresse}\\
+		\bitbox{8}{Type of Address (0x91)}\\
+		\wordbox[lrt]{1}{Telefonnummer des Empfängers (im Semi-Oktetten)} \\
+		\skippedwords \\
+		\wordbox[lrb]{1}{} \\
+		\bitbox{8}{Protocol Identifier (0x00)}\\
+		\bitbox{8}{Data Coding scheme (0x00)}\\
+		\bitbox{8}{Payload Länge (in Septetten)}\\
+		\wordbox[lrt]{3}{Payload} \\
+		\skippedwords \\
+		\wordbox[lrb]{1}{} \\
+	\end{bytefield}
+	\caption{Aufbau einer SMS-SUBMIT-Nachricht im PDU-Mode}
+	\label{fig:pdu}
+\end{figure}
+
+Um auch Nachrichten mit einer Länge größer als 160 Zeichen versenden zu können, 
+wurde ein eigener Nachrichtentyp spezifiziert. Der Unterschied zum
+herkömmlichen Nachrichtentyp ist der sogenannte \textit{User Data Header} welcher am
+Beginn des Payloads zu finden ist. Abbildung \ref{fig:gsm-udh} zeight schematisch den
+Aufbau des User Data Headers.\\
+\begin{figure}[H]
+	\begin{bytefield}[bitwidth=\textwidth/8]{8}
+		\bitbox{8}{Länge des User Data Headers (Anzahl der Oktetten)} \\
+		\bitbox{8}{User Data Header Identifier (0x08)} \\
+		\bitbox{8}{Länge der Referenz Nummer (0x04)} \\
+		\wordbox[lrt]{2}{Referenz Nummer (0x0000)} \\
+		\bitbox{8}{Anzahl der Teile} \\
+		\bitbox{8}{Teilnummer} \\
+	\end{bytefield}
+	\caption{Schematischer Aufbau des User Data Headers}
+	\label{fig:gsm-udh}
+\end{figure}
+
+\subsection{Text Kodierung}~\\
+Eine weitere Anforderung war die Verwendung des GSM 7-Bit Alphabets~\cite{gsm-7-bit} für die Textkodierung. Diese ermöglicht
+die Übertragung von 128 unterschiedlichen ASCII-Zeichen. Nach der Umwandlung der Zeichen
+in Septetten (7-Bit Blöcke) müssen diese noch mit einem geeigneten Algorithmus in Oktetten
+(8-Bit Blöcke) gepackt werden, da Daten üblicherweise byteweise übertragen werden. 
+
+Abbildung~\ref{fig:gsm-encoding} veranschaulicht grafisch die Konvertierung von 8 Septetten in
+7 Oktetten.\\
+\begin{figure}[H]
+\begin{bytefield}[bitwidth=\textwidth/56]{56}
+	\bitheader{0,6,7,13,14,20,21,27,28,34,35,41,42,48,49,55}\\
+	\bitbox{7}{Septet 1} & \bitbox{7}{Septet 2} & \bitbox{7}{Septet 3} & \bitbox{7}{Septet 4} & \bitbox{7}{Septet 5} & \bitbox{7}{Septet 6} & \bitbox{7}{Septet 7} & \bitbox{7}{Septet 8}\\
+	\bitbox{8}{Oktet 1} & \bitbox{8}{Oktet 2} & \bitbox{8}{Oktet 3} & \bitbox{8}{Oktet 4} & \bitbox{8}{Oktet 5} & \bitbox{8}{Oktet 6} & \bitbox{8}{Oktet 7}\\
+	\bitheader{0,7,8,15,16,23,24,31,32,39,40,47,48,55}\\
+\end{bytefield}
+	\caption{Umwandlung von 8 Septetten in 7 Oktetten}
+	\label{fig:gsm-encoding}
+\end{figure}
+Falls die Anzahl der zu übertragenden Septetten nicht einem Vielfachen von 8 entspricht,
+müssen sogenannte \textit{Paddingbits} noch am Schluss angefügt werden.
+
+\section{Methodisches Vorgehen - Fallbeispiel}
+\subsection{Laufzeitanforderungen}~\\
+Da Nokia nur Windows Treiber zur seriellen Kommunikation mit dem Handy zur Verfügung stellt,
+fiel die Entscheidung auf Windows XP SP3 als primäre Entwicklungs- und Laufzeitumgebung.
+
+Eine weitere Vorraussetzung für eine einwandfreie
+Funktionsweise ist die Installation des Nokia 6212 NFC SDKs. Letztere installiert einen COM Port, über jenem die gesamte
+Kommunikation mit dem Mobiltelefon statt findet. Wichtig ist, das dieser Port AT-Befehle akzeptiert. 
+Dazu öffnet man am besten eine Konsole (zum Beispiel \textit{Hyperterminal}) und tippt \texttt{AT} gefolgt von Enter ein. 
+Anschließend sollte dieser Befehl mit \texttt{OK} bestätigt werden. Sollte dies nicht der Fall sein, empfiehlt sich 
+die Neukonfiguration beziehungsweise die Vergabe eines anderen COM-Ports bei einer Neuinstallation des Modems.
+
+Zur seriellen Kommunikation ist weiters die Installation der \textit{Java Comm API} notwendig. Hierzu muss die native Bibliothek \textit{win32com.dll} in den Order \texttt{\%JAVA\_HOME\%/jre/bin} und die Datei \textit{javax.comm.properties} in den Order \texttt{\%JAVA\_HOME\%/jre/lib} kopiert werden (beide Dateien wurden von der LVA-Leitung zur Verfügung gestellt).
+
+\subsection{Build Management}~\\
+Als Buildmanagement Werkzeug wurde Apache Maven~\cite{maven} verwendet. Der Befehl \texttt{mvn package} erstellt ein
+ausführbares jar-Archiv im Order \textit{target}. Anschließend genügt  das Ausführen des Befehls \textit{java -jar sms-sender-1.0-SNAPSHOT-jar-with-dependencies.jar}
+um das Programm zu starten. 
+
+\subsection{Konfigurationsdateien}~\\
+Die primäre Konfigurationsdatei ist \textit{sendsms.properties}.
+Abbildung \ref{fig:sms-prop} zeigt beispielhaft eine ebensolche Datei.\\ 
+
+\begin{figure}[H]
+	\begin{verbatim}
+		csvfile=sendsms.csv
+		port=COM4
+	\end{verbatim}
+	\caption{Beispiel der Konfigurationsdatei \textit{sendsms.properties}}
+	\label{fig:sms-prop}
+\end{figure}
+
+Daneben muss noch ein Comma Separated File (CSV) existieren (spezifiziert in \textit{sendsms.properties}). 
+Abbildung \ref{fig:sms-csv} zeigt beispielhaft die Datei \textit{sendsms.csv}.\\
+ \begin{figure}[H]
+ 	\begin{verbatim}
+		+436507112256,This is a short text!
+		+436507112256,This is a not so short text!
+ 	\end{verbatim}
+ 	\caption{Beispiel der Konfigurationsdatei \textit{sendsms.csv}}
+ 	\label{fig:sms-csv}
+ \end{figure}
+ 
+ \section{Fazit}
+Essentiell für die korrekte Funktionsweise dieses Programms ist eine serielle Verbindung zum Mobiltelefon über jene AT-Befehle abgesetzt werden können. 
+Sollte dies nicht möglich sein, schafft wahrscheinlich ein Blick in den Gerätemanager Abhilfe. Das Handy sollte als Modem im Gerätemanager gelistet sein. 
+Ist dies nicht der Fall, hilft eine Neuinstallation des Handytreibers. Weiters sollte der richtige serielle Port angegeben werden. Dieser kann im Konfigurationsdialog
+des Modems im Reiter \texttt{Advanced} und einem Klick auf \texttt{Advanced Port Settings} konfiguriert werden. 
+
+% ------------------------------------------------------------------------------
+% Literatur
+% ------------------------------------------------------------------------------
+\newpage
+\bibliography{Literatur}
+\bibliographystyle{plainnat}
+\end{document}
